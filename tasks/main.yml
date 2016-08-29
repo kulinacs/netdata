@@ -1,0 +1,11 @@
+---
+- name: Install netdata
+  xbps: pkg=netdata state=present
+
+- name: Enable netdata
+  file: src=/etc/sv/netdata dest=/var/service/netdata state=link
+
+- name: Install firewall rules
+  copy: src=netdata.rules dest=/etc/iptables.d/netdata.rules owner=root group=root mode=0640
+  notify:
+    - iptables
