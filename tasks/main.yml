@@ -5,10 +5,10 @@
     state: present
 
 - name: Enable netdata
-  file:
-    src: /etc/sv/netdata
-    dest: /var/service/netdata
-    state: link
+  runit:
+    name: netdata
+    enabled: yes
+    state: started
 
 - name: Install firewall rules
   copy:
