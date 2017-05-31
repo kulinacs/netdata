@@ -10,6 +10,17 @@
     enabled: yes
     state: started
 
+- name: Install location.d config
+  template:
+    src: netdata.conf.j2
+    dest: /etc/nginx/locations.d/{{ netdata_nginx_server }}/netdata.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: netdata_nginx
+  notify:
+    - nginx
+
 - name: Install firewall rules
   copy:
     src: netdata.rules
