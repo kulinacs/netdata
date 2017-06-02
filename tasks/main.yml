@@ -21,6 +21,21 @@
   notify:
     - nginx
 
+- name: Install htpasswd file
+  htpasswd:
+    path: /etc/nginx/.htpasswd-netdata
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    owner: root
+    group: nginx
+    mode: 0640
+  with_items: "{{ netdata_users }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: netdata_nginx and netdata_basic_auth
+  notify:
+    - nginx
+
 - name: Install firewall rules
   copy:
     src: netdata.rules
