@@ -1,3 +1,10 @@
 ---
 netdata_uri: /netdata
 netdata_nginx: False
+netdata_basic_auth: True
+netdata_bind_to: localhost
+netdata_memory_mode: save
+netdata_web_mode: multi-threaded
+netdata_backend_enabled: 'no'
+netdata_stream_mode: none
+netdata_stream_destination_port: 19999

@@ -1,0 +1,5 @@
+---
+- name: netdata
+  runit:
+    name: netdata
+    state: restarted

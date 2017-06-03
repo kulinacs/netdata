@@ -1,0 +1,9 @@
+*filter
+-A INPUT -p tcp --dport 19999 -j ACCEPT
+
+{% if netdata_stream_mode == 'slave' %}
+-A OUTPUT -p tcp --dport {{ netdata_stream_destination_port }} -j ACCEPT
+{% endif %}
+
+COMMIT
+

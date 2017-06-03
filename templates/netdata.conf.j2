@@ -1,51 +1,26 @@
-{% if netdata_uri != '/' %}
-location {{ netdata_uri }} {
-        return 301 /netdata/;
-}
+# NetData Configuration
+#
+# To see defaults, grab one from your instance:
+# http://localhost:19999/netdata.conf
 
-location ~ {{ netdata_uri }}/(?<ndpath>.*) {
-        proxy_redirect off;
-        proxy_set_header Host $host;
+# global netdata configuration
 
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Server $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_http_version 1.1;
-        proxy_pass_request_headers on;
-        proxy_set_header Connection "keep-alive";
-        proxy_store off;
-        proxy_pass http://127.0.0.1:19999/$ndpath$is_args$args;
+[global]
+        run as user = _netdata
+        web files owner = root
+        web files group = root
+        # Netdata is not designed to be exposed to potentially hostile networks
+        # See https://github.com/firehol/netdata/issues/164
+        bind to = {{ netdata_bind_to }}
+	memory mode = {{ netdata_memory_mode }}
 
-	{% if netdata_basic_auth is not defined or netdata_basic_auth %}
-	    auth_basic "Netdata";
-    	    auth_basic_user_file /etc/nginx/.htpasswd-netdata;
+[web]
+	mode = {{ netdata_web_mode }}
+
+[backend]
+	enabled = {{ netdata_backend_enabled }}
+	{% if netdata_backend_enabled == 'yes' %}
+	type = {{ netdata_backend_type }}
+	destination = {{ netdata_backend_destination }}
+	update every = {{ netdata_backend_update }}
 	{% endif %}
-
-        gzip on;
-        gzip_proxied any;
-        gzip_types *;
-}
-{% else %}
-location {{ netdata_uri }} {
-        proxy_redirect off;
-        proxy_set_header Host $host;
-
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Server $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_http_version 1.1;
-        proxy_pass_request_headers on;
-        proxy_set_header Connection "keep-alive";
-        proxy_store off;
-        proxy_pass http://127.0.0.1:19999/;
-
-	{% if netdata_basic_auth is not defined or netdata_basic_auth %}
-	    auth_basic "Netdata";
-    	    auth_basic_user_file /etc/nginx/.htpasswd-netdata;
-	{% endif %}
-
-        gzip on;
-        gzip_proxied any;
-        gzip_types *;
-}
-{% endif %}

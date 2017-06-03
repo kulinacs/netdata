@@ -10,9 +10,29 @@
     enabled: yes
     state: started
 
-- name: Install location.d config
+- name: Install netdata base config
   template:
     src: netdata.conf.j2
+    dest: /etc/netdata/netdata.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - netdata
+
+- name: Install netdata stream config
+  template:
+    src: stream.conf.j2
+    dest: /etc/netdata/stream.conf
+    owner: root
+    group: _netdata
+    mode: 0640
+  notify:
+    - netdata
+
+- name: Install location.d config
+  template:
+    src: netdata-nginx.conf.j2
     dest: /etc/nginx/locations.d/{{ netdata_nginx_server }}/netdata.conf
     owner: root
     group: root
@@ -37,8 +57,8 @@
     - nginx
 
 - name: Install firewall rules
-  copy:
-    src: netdata.rules
+  template:
+    src: netdata.rules.j2
     dest: /etc/iptables.d/netdata.rules
     owner: root
     group: root
