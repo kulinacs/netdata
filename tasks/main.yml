@@ -4,12 +4,6 @@
     pkg: netdata
     state: present
 
-- name: Enable netdata
-  runit:
-    name: netdata
-    enabled: yes
-    state: started
-
 - name: Install netdata base config
   template:
     src: netdata.conf.j2
@@ -65,3 +59,9 @@
     mode: 0640
   notify:
     - iptables
+
+- name: Enable netdata
+  runit:
+    name: netdata
+    enabled: yes
+    state: started
